@@ -48,8 +48,6 @@ body:
       description: This needs to be an official link and not one that is hosted on some forum page or a personal Github page. Docker image is not a viable option.
     validations:
       required: true
-    validations:
-      required: true
   - type: input
     id: instruction-link
     attributes:
