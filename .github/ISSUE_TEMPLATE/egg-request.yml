@@ -1,6 +1,6 @@
 name: 🥚 template/image Request
 description: Suggest a server to build an template/image for
-title: "[template/image Request]: <Software/Game>"
+title: "[Request]: <Software/Game>"
 labels: ["template/image request"]
 body:
   - type: markdown
