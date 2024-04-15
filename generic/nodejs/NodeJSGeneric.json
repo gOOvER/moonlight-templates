@@ -1,0 +1,130 @@
+{
+  "Name": "NodeJS Generic",
+  "Author": "info@goover.dev",
+  "UpdateUrl": null,
+  "DonateUrl": "https://ko-fi.com/oldnoob",
+  "StartupCommand": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then /usr/local/bin/npm install ${NODE_PACKAGES}; fi; if [[ ! -z ${UNNODE_PACKAGES} ]]; then /usr/local/bin/npm uninstall ${UNNODE_PACKAGES}; fi; if [ -f /home/container/package.json ]; then /usr/local/bin/npm install; fi; if [[ \"${MAIN_FILE}\" == \"*.js\" ]]; then /usr/local/bin/node \"/home/container/${MAIN_FILE}\" ${NODE_ARGS}; else /usr/local/bin/ts-node --esm \"/home/container/${MAIN_FILE}\" ${NODE_ARGS}; fi",
+  "OnlineDetection": "EDIT THIS YOURSELF",
+  "StopCommand": "^C",
+  "InstallShell": "/bin/bash",
+  "InstallDockerImage": "ghcr.io/goover/installers:nodejs",
+  "InstallScript": "#!/bin/bash\n#\nclear\nRED='\\033[0;31m'\nGREEN='\\033[0;32m'\nYELLOW='\\033[1;33m'\nBLUE='\\033[0;34m'\nNC='\\033[0m'\n\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${YELLOW}NodeJS Generic Installscript${NC}\"\necho -e \"${YELLOW}Template by gOOvER | https://discord.goover.dev${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\n\napt update\napt install -y git curl jq file unzip make gcc g++ python python-dev libtool\n\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${YELLOW}updating npm. please wait...${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\nnpm install npm@latest -g\n\nmkdir -p /mnt/server\ncd /mnt/server\n\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    echo -e \"${YELLOW}assuming user knows what they are doing have a good day.${NC}\"\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    exit 0\nfi\n\n## add git ending if it's not on the address\nif [[ ${GIT_ADDRESS} != *.git ]]; then\n    GIT_ADDRESS=${GIT_ADDRESS}.git\nfi\n\nif [ -z \"${USERNAME}\" ] && [ -z \"${ACCESS_TOKEN}\" ]; then\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    echo -e \"${RED}using anon api call${NC}\"\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\nelse\n    GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo -e ${GIT_ADDRESS} | cut -d/ -f3-)\"\nfi\n\n## pull git js repo\nif [ \"$(ls -A /mnt/server)\" ]; then\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    echo -e \"${YELLOW}/mnt/server directory is not empty.${NC}\"\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    if [ -d .git ]; then\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        echo -e \"${YELLOW}.git directory exists${NC}\"\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        if [ -f .git/config ]; then\n            echo -e \"${BLUE}-------------------------------------------------${NC}\"\n            echo -e \"${YELLOW}loading info from git config${NC}\"\n            echo -e \"${BLUE}-------------------------------------------------${NC}\"\n            ORIGIN=$(git config --get remote.origin.url)\n        else\n            echo -e \"${BLUE}-------------------------------------------------${NC}\"\n            echo -e \"${YELLOW}files found with no git config${NC}\"\n            echo -e \"${YELLOW}closing out without touching things to not break anything${NC}\"\n            echo -e \"${BLUE}-------------------------------------------------${NC}\"\n            exit 10\n        fi\n    fi\n\n    if [ \"${ORIGIN}\" == \"${GIT_ADDRESS}\" ]; then\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        echo \"${YELLOW}pulling latest from github${NC}\"\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        git pull\n    fi\nelse\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    echo -e \"${YELLOW}/mnt/server is empty.\\ncloning files into repo${NC}\"\n    echo -e \"${BLUE}-------------------------------------------------${NC}\"\n    if [ -z ${BRANCH} ]; then#\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        echo -e \"${YELLOW}cloning default branch${NC}\"\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        git clone ${GIT_ADDRESS} .\n    else\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        echo -e \"${YELLOW}cloning ${BRANCH}'${NC}\"\n        echo -e \"${BLUE}-------------------------------------------------${NC}\"\n        git clone --single-branch --branch ${BRANCH} ${GIT_ADDRESS} .\n    fi\n\nfi\n\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho \"${YELLOW}Installing nodejs packages${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\nif [[ ! -z ${NODE_PACKAGES} ]]; then\n    /usr/local/bin/npm install ${NODE_PACKAGES}\nfi\n\nif [ -f /mnt/server/package.json ]; then\n    /usr/local/bin/npm install --production\nfi\n\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${GREEN}install complete${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\nexit 0",
+  "ParseConfiguration": "[]",
+  "AllocationsNeeded": 1,
+  "Variables": [
+    {
+      "Key": "BRANCH",
+      "DefaultValue": "",
+      "DisplayName": "Install Branch",
+      "Description": "The branch to install.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "USER_UPLOAD",
+      "DefaultValue": "0",
+      "DisplayName": "User Uploaded Files",
+      "Description": "Skip all the install stuff if you are letting a user upload files.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "AUTO_UPDATE",
+      "DefaultValue": "0",
+      "DisplayName": "Auto Update",
+      "Description": "Pull the latest files on startup when using a GitHub repo.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "NODE_PACKAGES",
+      "DefaultValue": "",
+      "DisplayName": "Additional Node packages",
+      "Description": "Install additional node packages.  Use spaces to separate.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "USERNAME",
+      "DefaultValue": "",
+      "DisplayName": "Git Username",
+      "Description": "Username to auth with git",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "ACCESS_TOKEN",
+      "DefaultValue": "",
+      "DisplayName": "Git Access Token",
+      "Description": "Password to use with git.  It's best practice to use a Personal Access Token. -> https://github.com/settings/tokens; -> https://gitlab.com/-/profile/personal_access_tokens",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "UNNODE_PACKAGES",
+      "DefaultValue": "",
+      "DisplayName": "Uninstall Node packages",
+      "Description": "Uninstall node packages.  Use spaces to separate.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "MAIN_FILE",
+      "DefaultValue": "index.js",
+      "DisplayName": "Main file",
+      "Description": "The file that starts the app. Can be .js and .ts",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "NODE_ARGS",
+      "DefaultValue": "",
+      "DisplayName": "Additional Arguments.",
+      "Description": "Any extra arguments for nodejs or ts-node",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "GIT_ADDRESS",
+      "DefaultValue": "",
+      "DisplayName": "Git Repo Address",
+      "Description": "GitHub Repo to clone",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    }
+  ],
+  "DefaultDockerImage": 2,
+  "AllowDockerImageChange": true,
+  "DockerImages": [
+    {
+      "DisplayName": "nodejs 16",
+      "Name": "ghcr.io/goover/nodejs:16",
+      "AutoPull": true
+    },
+    {
+      "DisplayName": "nodejs 18",
+      "Name": "ghcr.io/goover/nodejs:18",
+      "AutoPull": true
+    },
+    {
+      "DisplayName": "nodejs 20",
+      "Name": "ghcr.io/goover/nodejs:20",
+      "AutoPull": true
+    },
+    {
+      "DisplayName": "nodejs 21",
+      "Name": "ghcr.io/goover/nodejs:21",
+      "AutoPull": true
+    }
+  ]
+}
