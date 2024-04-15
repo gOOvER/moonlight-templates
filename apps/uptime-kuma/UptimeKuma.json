@@ -1,7 +1,7 @@
 {
   "Name": "Uptime Kuma",
   "Author": "info@goover.dev",
-  "UpdateUrl": null,
+  "UpdateUrl": "https://github.com/gOOvER/moonlight-templates/blob/main/apps/uptime-kuma/UptimeKuma.json",
   "DonateUrl": "https://ko-fi.com/oldnoob",
   "StartupCommand": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then npm run setup; fi; /usr/local/bin/node /home/container/server/server.js --port={{ML_PORT_1}}",
   "OnlineDetection": "\\[SERVER]\\ INFO:\\ Listening\\ on\\ ",
