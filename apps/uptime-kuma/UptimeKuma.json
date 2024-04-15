@@ -1,0 +1,52 @@
+{
+  "Name": "Uptime Kuma",
+  "Author": "info@goover.dev",
+  "UpdateUrl": null,
+  "DonateUrl": "https://ko-fi.com/oldnoob",
+  "StartupCommand": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then npm run setup; fi; /usr/local/bin/node /home/container/server/server.js --port={{ML_PORT_1}}",
+  "OnlineDetection": "\\[SERVER]\\ INFO:\\ Listening\\ on\\ ",
+  "StopCommand": "^C",
+  "InstallShell": "/bin/ash",
+  "InstallDockerImage": "node:18-alpine",
+  "InstallScript": "#!/bin/ash\r\nclear\r\nRED='\\033[0;31m'\r\nGREEN='\\033[0;32m'\r\nYELLOW='\\033[1;33m'\r\nBLUE='\\033[0;34m'\r\nNC='\\033[0m'\r\n\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\necho -e \"${YELLOW}Uptime Kuma Installscript${NC}\"\r\necho -e \"${RED}Copyright 2023 by gOOvER - https://goover.dev${NC}\"\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------\\n\\n${NC}\"\r\n\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\necho -e \"${YELLOW}install needed packages...${NC}\"\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------\\n${NC}\"\r\n\r\napk update\r\napk add --no-cache git curl jq file unzip make gcc g++ python3 python3-dev libtool\r\napk add --no-cache git-lfs --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community\r\necho -e \"${GREEN}..done..${NC}\"\r\n\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\necho -e \"${YELLOW}updating npm to latest...\\n${NC}\"\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\nif [ -d \"/mnt/server/node_modules\" ]; then\r\n    rm -fR /mnt/server/node_modules\r\n    npm cache verify\r\nfi\r\n\r\nnpm install -g npm@latest\r\necho -e \"${GREEN}..done..\\n\\n${NC}\"\r\n\r\nmkdir -p /mnt/server\r\ncd /mnt/server\r\ngit config --global --add safe.directory /mnt/server\r\n\r\nif [ -d .git ]; then\r\n    echo -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\n    echo -e \"${YELLOW}Updating Uptime Kuma.... ${NC}\"\r\n    echo -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\n    npm run setup\r\n    echo -e \"${GREEN}..done..\\n\\n${NC}\"\r\nelse\r\n    echo -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\n    echo -e \"${YELLOW}Download and installing Uptime Kuma...${NC}\"   \r\n    echo -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\n    git clone https://github.com/louislam/uptime-kuma.git .\r\n    npm run setup\r\n    echo -e \"${GREEN}..done..\\n\\n${NC}\"\r\nfi\r\n\r\nif [ -d .git ]; then\r\n    mkdir -p /mnt/server/data\r\nfi\r\n\r\nif [ ! -f \"/mnt/server/data/kuma.db\" ]; then\r\n    cp /mnt/server/db/kuma.db /mnt/server/data/kuma.db\r\nfi\r\n\r\n## install end\r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\necho -e \"${GREEN}Install completed${NC}\"   \r\necho -e \"${BLUE}--------------------------------------------------------------------------------------------------${NC}\"\r\nexit 0",
+  "ParseConfiguration": "[]",
+  "AllocationsNeeded": 1,
+  "Variables": [
+    {
+      "Key": "GIT_ADDRESS",
+      "DefaultValue": "https://github.com/louislam/uptime-kuma",
+      "DisplayName": "Git Repo Address",
+      "Description": "GitHub Repo to clone",
+      "AllowView": false,
+      "AllowEdit": false,
+      "Filter": null
+    },
+    {
+      "Key": "JS_FILE",
+      "DefaultValue": "server/server.js",
+      "DisplayName": "JS file",
+      "Description": "The file that starts the app",
+      "AllowView": false,
+      "AllowEdit": false,
+      "Filter": null
+    },
+    {
+      "Key": "AUTO_UPDATE",
+      "DefaultValue": "1",
+      "DisplayName": "Auto Update",
+      "Description": "",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    }
+  ],
+  "DefaultDockerImage": 0,
+  "AllowDockerImageChange": false,
+  "DockerImages": [
+    {
+      "DisplayName": "ghcr.io/goover/apps:uptimekumacf",
+      "Name": "ghcr.io/goover/apps:uptimekumacf",
+      "AutoPull": true
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "Name": "Forgejo",
   "Author": "eggs@goover.dev",
-  "UpdateUrl": null,
+  "UpdateUrl": "https://github.com/gOOvER/moonlight-templates/blob/main/apps/forgejo/Forgejo.json",
   "DonateUrl": "https://ko-fi.com/oldnoob",
   "StartupCommand": "./forgejo web -p {{ML_PORT_1}} -c ./custom/app.ini",
   "OnlineDetection": "Listen:\\ ",
