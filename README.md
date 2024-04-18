@@ -19,3 +19,9 @@ All Images are a complete rewrite and not a simple import of the Egg.
 | Template           | URI                                    | AMD64 | ARM64 |
 | ------------------ | :------------------------------------: | :------:| :------: |
 | NodeJS             | [Template Link](/generic/nodejs/)      | ✅ | ✅ |
+
+## [SteamCMD Games](/games/steamcmd)
+| Template           | URI                                    | AMD64 | ARM64 |
+| ------------------ | :------------------------------------: | :------:| :------: |
+| Satisfactory       | [Template Link](/games/steamcmd/satisfactory/)      | ✅ | ❌ |
+
