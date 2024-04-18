@@ -1,7 +1,7 @@
 {
   "Name": "Satisfactory",
   "Author": "info@goover.dev",
-  "UpdateUrl": null,
+  "UpdateUrl": "https://github.com/gOOvER/moonlight-templates/blob/main/games/steamcmd/satisfactory/Satisfactory.json",
   "DonateUrl": "https://ko-fi.com/oldnoob",
   "StartupCommand": "./Engine/Binaries/Linux/*-Linux-Shipping FactoryGame ?listen -Port={{ML_PORT_1}} -ServerQueryPort={{ML_PORT_2}} -BeaconPort={{ML_PORT_3}} -multihome=0.0.0.0 $(if {{DISABLE_SEASONAL}}; then echo \"-DisableSeasonalEvents\"; fi)",
   "OnlineDetection": "Engine Initialization",
