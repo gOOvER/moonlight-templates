@@ -1,0 +1,88 @@
+{
+  "Name": "Satisfactory",
+  "Author": "info@goover.dev",
+  "UpdateUrl": null,
+  "DonateUrl": "https://ko-fi.com/oldnoob",
+  "StartupCommand": "./Engine/Binaries/Linux/*-Linux-Shipping FactoryGame ?listen -Port={{ML_PORT_1}} -ServerQueryPort={{ML_PORT_2}} -BeaconPort={{ML_PORT_3}} -multihome=0.0.0.0 $(if {{DISABLE_SEASONAL}}; then echo \"-DisableSeasonalEvents\"; fi)",
+  "OnlineDetection": "Engine Initialization",
+  "StopCommand": "^C",
+  "InstallShell": "/bin/bash",
+  "InstallDockerImage": "ghcr.io/goover/installers:debian",
+  "InstallScript": "#!/bin/bash\n#\nRED='\\033[0;31m'\nGREEN='\\033[0;32m'\nYELLOW='\\033[1;33m'\nBLUE='\\033[0;34m'\nNC='\\033[0m'\n\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${YELLOW}Satisfactory Installscript${NC}\"\necho -e \"${YELLOW}Template by gOOvER | https://goover.dev${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\n\n#apt -y update\n#apt -y --no-install-recommends install curl lib32gcc-s1 ca-certificates jq dos2unix\n\necho -e \"Port 1 ${ML_PORT_1}\"\necho -e \"Port 2 ${ML_PORT_2}\"\necho -e \"Port 3 ${ML_PORT_3}\"\n\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${YELLOW}download and install steamcmd. please wait...${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\n\n## just in case someone removed the defaults.\nif [[ \"${STEAM_USER}\" == \"\" ]] || [[ \"${STEAM_PASS}\" == \"\" ]]; then\n    echo -e \"steam user is not set.\\n\"\n    echo -e \"Using anonymous user.\\n\"\n    STEAM_USER=anonymous\n    STEAM_PASS=\"\"\n    STEAM_AUTH=\"\"\nelse\n    echo -e \"user set to ${STEAM_USER}\"\nfi\n\n## download and install steamcmd\ncd /tmp\nmkdir -p /mnt/server/steamcmd\ncurl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\ntar -xzvf steamcmd.tar.gz -C /mnt/server/steamcmd\nmkdir -p /mnt/server/steamapps # Fix steamcmd disk write error when this folder is missing\ncd /mnt/server/steamcmd\n\n# SteamCMD fails otherwise for some reason, even running as root.\n# This is changed at the end of the install process anyways.\nchown -R root:root /mnt\nexport HOME=/mnt/server\necho -e \"${GREEN}..done..${NC}\"\n\n## install game using steamcmd\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${YELLOW}install game using steamcmd. please wait...${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\n\n./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ \"${WINDOWS_INSTALL}\" == \"1\" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ \"${STEAM_SDK}\" == \"1\" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s \"-beta ${STEAM_BETAID}\" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s \"-betapassword ${STEAM_BETAPASS}\" ) ${INSTALL_FLAGS} validate +quit\necho -e \"${GREEN}..done..${NC}\"\n\n## set up 32 bit libraries\nmkdir -p /mnt/server/.steam/sdk32\ncp -v linux32/steamclient.so ../.steam/sdk32/steamclient.so\n\n## set up 64 bit libraries\nmkdir -p /mnt/server/.steam/sdk64\ncp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so\n\n# add below your custom commands if needed\n\n\n## install end\necho -e \"${BLUE}-------------------------------------------------${NC}\"\necho -e \"${GREEN}Installation completed...${NC}\"\necho -e \"${BLUE}-------------------------------------------------${NC}\"\n\necho -e \"Port 1 ${ML_PORT_1}\"\necho -e \"Port 2 ${ML_PORT_2}\"\necho -e \"Port 3 ${ML_PORT_3}\"\n",
+  "ParseConfiguration": "[{\"Type\":\"ini\",\"File\":\"FactoryGame/Saved/Config/LinuxServer/Game.ini\",\"Configuration\":{\"MaxPlayers\":\"MAX_PLAYERS\"}},{\"Type\":\"ini\",\"File\":\"FactoryGame/Saved/Config/LinuxServer/Engine.ini\",\"Configuration\":{\"mNumRotatingAutosaves\":\"NUM_AUTOSAVES\",\"bImplicitSend\":\"UPLOAD_CRASH_REPORT\"}},{\"Type\":\"ini\",\"File\":\"FactoryGame/Saved/Config/LinuxServer/GameUserSettings.ini\",\"Configuration\":{\"mFloatValues\":\"AUTOSAVE_INTERVAL\"}}]",
+  "AllocationsNeeded": 3,
+  "Variables": [
+    {
+      "Key": "STEAM_APPID",
+      "DefaultValue": "1690800",
+      "DisplayName": "STEAM_APPID",
+      "Description": "AppID of the dedicated server",
+      "AllowView": false,
+      "AllowEdit": false,
+      "Filter": "1690800"
+    },
+    {
+      "Key": "AUTO_UPDATE",
+      "DefaultValue": "1",
+      "DisplayName": "Server AutoUpdate",
+      "Description": "Quickly checks for any server updates on startup/restart, and updates if necessary. ",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "AUTOSAVE_INTERVAL",
+      "DefaultValue": "300",
+      "DisplayName": "Autosave Interval",
+      "Description": "How often, in seconds, the server should generate a new autosave (ex. 300 = 5 min). Keep in mind that shorter times mean that while the server will save the game more often, it also means a potential drop in server performance. NOTE: This overrides any \"FG.AutosaveInterval\" commands made to the console!",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "NUM_AUTOSAVES",
+      "DefaultValue": "3",
+      "DisplayName": "Number of Rotating Autosaves",
+      "Description": "Number of session auto-saves for the server to keep before the oldest save is deleted and the others are moved down the list.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "DISABLE_SEASONAL",
+      "DefaultValue": "false",
+      "DisplayName": "Disable Seasonal Events",
+      "Description": "Setting to \"true\" will disable any currently active seasonal events.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": "boolean"
+    },
+    {
+      "Key": "MAX_PLAYERS",
+      "DefaultValue": "4",
+      "DisplayName": "Max Players",
+      "Description": "The server and client are currently not optimized to support more than 4 players. However, you can override this value here at your own risk of poor performance.",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": null
+    },
+    {
+      "Key": "STEAM_BETAID",
+      "DefaultValue": "",
+      "DisplayName": "Branch Name",
+      "Description": "[Accepted Values: \"public\", \"experimental\", or leave empty to use the primary branch of the server] Used to download or switch to a non-primary branch of the game server. \"Automatic Updates\" and \"Validate Server Files\" must be set to \"1\" to switch branches if the server is already installed. NOTE: Any non-primary branches may not be fully compatible/stable!",
+      "AllowView": true,
+      "AllowEdit": true,
+      "Filter": "public;experimental"
+    }
+  ],
+  "DefaultDockerImage": 0,
+  "AllowDockerImageChange": false,
+  "DockerImages": [
+    {
+      "DisplayName": "ghcr.io/goover/steamcmd:notini",
+      "Name": "ghcr.io/goover/steamcmd:debian",
+      "AutoPull": true
+    }
+  ]
+}
